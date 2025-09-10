@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, Touchable, TouchableOpacity } from 'react-native';
 import { Stack } from 'expo-router';
 import { Link, router} from 'expo-router';
 
@@ -41,9 +41,13 @@ const SignUp = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <Button 
+            <TouchableOpacity 
+            style={{backgroundColor:'#f539ccff',padding:12,borderRadius:8,width:'60%',alignItems:'center', marginTop:20,  alignSelf:'center'}} 
             onPress={() => router.push('/(tabs)')}
-            title="Cadastrar"  />
+            >
+              <Text style={{color:'#fff', fontWeight:'bold'}}>Cadastrar</Text>
+            </TouchableOpacity>
+            <Text style={{marginTop:20}}>Já tem uma conta? <Text style={{color:'#cc11a3ff', fontWeight:'bold'}} onPress={() => router.push('/signIn')}>Entrar</Text></Text>
         </View>
     );
 };
