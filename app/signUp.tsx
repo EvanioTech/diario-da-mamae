@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { Stack } from 'expo-router';
-import { Link } from 'expo-router';
+import { Link, router} from 'expo-router';
 
 const SignUp = () => {
     const [name, setName] = useState('');
@@ -41,7 +41,9 @@ const SignUp = () => {
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <Button title="Cadastrar" onPress={handleSignUp} />
+            <Button 
+            onPress={() => router.push('/(tabs)')}
+            title="Cadastrar"  />
         </View>
     );
 };

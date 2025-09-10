@@ -1,5 +1,6 @@
 import { View,Text,Image, TouchableOpacity } from "react-native";
 import { Link, router } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 
 
 export default function Index() {
@@ -13,6 +14,7 @@ export default function Index() {
          style={{backgroundColor:'#cc11a3ff',padding:12,borderRadius:8,width:'50%',alignItems:'center', marginTop:20}}>
           <Text style={{color:'#fff',fontWeight:'bold'}}>Começar</Text>
         </TouchableOpacity>
+      <StatusBar style="dark" />
     </View>
   );
 }
