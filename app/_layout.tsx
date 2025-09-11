@@ -11,15 +11,15 @@ export default function RootLayout() {
 
 
   return (
-    
+    <>
       <Stack 
       initialRouteName='index'
       screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
         <Stack.Screen name="index"  />
         <Stack.Screen name="signUp" />
-        
-        <StatusBar style="inverted" />
+        <Stack.Screen name="signIn" />
       </Stack>
+      </>
       
 
    
