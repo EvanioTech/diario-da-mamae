@@ -12,7 +12,7 @@ const EditProfileScreen = () => {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.container}>
             <Text style={styles.title}>Editar Perfil</Text>
             <Text style={styles.label}>Nome</Text>
             <TextInput
@@ -40,21 +40,23 @@ const EditProfileScreen = () => {
                 numberOfLines={4}
             />
             <Button title="Salvar" onPress={handleSave} />
-        </ScrollView>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        padding: 24,
+        padding: 20,
         backgroundColor: '#fff',
-        flexGrow: 1,
+        flex: 1,
+        justifyContent: 'center',
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 24,
         textAlign: 'center',
+        
     },
     label: {
         fontSize: 16,
