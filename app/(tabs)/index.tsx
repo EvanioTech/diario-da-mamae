@@ -14,10 +14,10 @@ const Home = () => {
        paddingHorizontal:10,
        justifyContent: 'space-between' // separa os botões
        }}>
-        <View style={{flexDirection:'row', flex:1}}>
+        <View style={{flexDirection:'row', flex:1, justifyContent: 'space-between'}}>
           <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
           style={
-            {width:150,
+            {width:"90%",
               height:70,
              padding:20,
               backgroundColor:'#f539ccff',
@@ -35,14 +35,14 @@ const Home = () => {
             <Text style={{color:'#fff', fontWeight:'bold',fontSize:26}}>Tete</Text>
           </TouchableOpacity>
         </View>
-        <View style={{  flex:1 }}>
+        <View style={{  flex:1,justifyContent: 'space-between' }}>
           <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
           style={
-            {width:150,
+            {width:"90%",
              height:70,
               backgroundColor:'#f539ccff',
                borderRadius:10,
-               marginLeft:25,
+               
                alignSelf:'center',
                alignItems:'center',
                 justifyContent:'center',
@@ -61,7 +61,7 @@ const Home = () => {
         <View style={{flexDirection:'row', flex:1}}>
           <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
           style={
-            {width:150,
+            {width:"90%",
               height:70,
              padding:20,
               backgroundColor:'#f539ccff',
@@ -82,7 +82,7 @@ const Home = () => {
         <View style={{  flex:1 }}>
           <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
           style={
-            {width:170,
+            {width:"90%",
              height:70,
               backgroundColor:'#f539ccff',
                borderRadius:10,
