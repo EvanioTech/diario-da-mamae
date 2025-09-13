@@ -26,10 +26,8 @@ const ExploreScreen = () => {
                       marginTop:70,
                       
                       flexDirection:'row',
-                      
-
-
-                     }}><Image source={require('../../../assets/images/mama.png')} style={{width:40, height:40, marginRight:10}} />
+                      }}>
+                        <Image source={require('../../../assets/images/mama.png')} style={{width:40, height:40, marginRight:10}} />
                   <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Tete</Text>
                   <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
                 </TouchableOpacity>
