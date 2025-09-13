@@ -17,7 +17,7 @@ const Home = () => {
         <View style={{flexDirection:'row', flex:1, justifyContent: 'space-between'}}>
           <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
           style={
-            {width:"90%",
+            {width:"95%",
               height:70,
              padding:20,
               backgroundColor:'#f539ccff',
@@ -38,10 +38,11 @@ const Home = () => {
         <View style={{  flex:1,justifyContent: 'space-between' }}>
           <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
           style={
-            {width:"90%",
+            {width:"95%",
              height:70,
               backgroundColor:'#f539ccff',
                borderRadius:10,
+                padding:20,
                
                alignSelf:'center',
                alignItems:'center',
@@ -61,11 +62,13 @@ const Home = () => {
         <View style={{flexDirection:'row', flex:1}}>
           <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
           style={
-            {width:"90%",
+            {width:"95%",
               height:70,
              padding:20,
               backgroundColor:'#f539ccff',
                borderRadius:10,
+               
+              
               
                alignItems:'center',
                 justifyContent:'center',
