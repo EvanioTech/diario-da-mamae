@@ -101,7 +101,7 @@ const ExploreScreen = () => {
                      
                      }}>
                       <Image source={require('../../../assets/images/frasco.png')} style={{width:40, height:40, marginRight:10, marginLeft:10}} />
-                  <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Remédio</Text>
+                  <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Remédios</Text>
                   <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
                 </TouchableOpacity>
               

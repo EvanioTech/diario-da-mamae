@@ -28,7 +28,7 @@ const BanhoPage = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+    container: { flex: 1, padding: 26, backgroundColor: '#fff', justifyContent: 'center', paddingTop: 160  },
     title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16 },
     banhoItem: { marginBottom: 16, padding: 12, backgroundColor: '#f0f0f0', borderRadius: 8 },
     dataHora: { fontSize: 16, fontWeight: '600' },

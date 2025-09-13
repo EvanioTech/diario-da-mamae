@@ -31,8 +31,10 @@ const RemediosPage = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        padding: 26,
         backgroundColor: '#fff',
+        justifyContent: 'center',
+        paddingTop: 160
     },
     title: {
         fontSize: 22,

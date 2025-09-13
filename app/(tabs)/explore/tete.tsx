@@ -56,7 +56,7 @@ export default function TetePage() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+    container: { flex: 1, padding: 40, backgroundColor: '#fff', paddingTop: 160  },
     title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
     buttonRow: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 20 },
     button: { padding: 15, borderRadius: 8 },
