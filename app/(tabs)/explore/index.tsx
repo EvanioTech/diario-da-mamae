@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 
@@ -8,7 +9,7 @@ const ExploreScreen = () => {
       
       
               
-                <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
+                <TouchableOpacity onPress={() => router.push('/(tabs)/explore/tete')} 
                 style={
                   {width:"95%",
                     height:70,
@@ -26,12 +27,12 @@ const ExploreScreen = () => {
                     
                      
                      }}>
-                      <Image source={require('../../assets/images/mama.png')} style={{width:40, height:40, marginRight:10}} />
+                      <Image source={require('../../../assets/images/mama.png')} style={{width:40, height:40, marginRight:10}} />
                   <Text style={{color:'#fff', fontWeight:'bold',fontSize:26}}>Tete</Text>
                 </TouchableOpacity>
               
               
-                <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
+                <TouchableOpacity onPress={() => router.push('/(tabs)/explore/coco')} 
                 style={
                   {width:"95%",
                    height:70,
@@ -47,7 +48,7 @@ const ExploreScreen = () => {
                       
                      
                      }}>
-                      <Image source={require('../../assets/images/coco.png')} style={{width:40, height:40, marginRight:10}} />
+                      <Image source={require('../../../assets/images/coco.png')} style={{width:40, height:40, marginRight:10}} />
                   <Text style={{color:'#fff', fontWeight:'bold',fontSize:26}}>Coco</Text>
                 </TouchableOpacity>
               
@@ -55,7 +56,7 @@ const ExploreScreen = () => {
             
             
               
-                <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
+                <TouchableOpacity onPress={() => router.push('/(tabs)/explore/banho')} 
                 style={
                   {width:"95%",
                     height:70,
@@ -72,12 +73,12 @@ const ExploreScreen = () => {
                     
                      
                      }}>
-                      <Image source={require('../../assets/images/banho.png')} style={{width:40, height:40, marginRight:10}} />
+                      <Image source={require('../../../assets/images/banho.png')} style={{width:40, height:40, marginRight:10}} />
                   <Text style={{color:'#fff', fontWeight:'bold',fontSize:26}}>Banho</Text>
                 </TouchableOpacity>
               
               
-                <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
+                <TouchableOpacity onPress={() => router.push('/(tabs)/explore/remedios')} 
                 style={
                   {width:"95%",
                    height:70,
@@ -93,7 +94,7 @@ const ExploreScreen = () => {
                       
                      
                      }}>
-                      <Image source={require('../../assets/images/frasco.png')} style={{width:40, height:40, marginRight:10}} />
+                      <Image source={require('../../../assets/images/frasco.png')} style={{width:40, height:40, marginRight:10}} />
                   <Text style={{color:'#fff', fontWeight:'bold',fontSize:26}}>Remédio</Text>
                 </TouchableOpacity>
               
