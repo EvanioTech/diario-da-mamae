@@ -82,10 +82,11 @@ const Home = () => {
         <View style={{  flex:1 }}>
           <TouchableOpacity onPress={() => alert('Cor 1 selecionada!')} 
           style={
-            {width:"90%",
+            {width:"95%",
              height:70,
               backgroundColor:'#f539ccff',
                borderRadius:10,
+               padding:20,
                 
                
                alignSelf:'center',
