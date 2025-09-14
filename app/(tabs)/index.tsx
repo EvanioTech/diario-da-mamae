@@ -1,144 +1,129 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from 'react-native';
-import { useState } from 'react';
-
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, FlatList } from 'react-native';
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState('');
-  const [ismodalVisible, setIsModalVisible] = useState(false);
+const [ismodalVisible, setIsModalVisible] = useState(false);
+const [modalOptions, setModalOptions] = useState<{ key: string }[]>([]); // <-- aqui guardamos as opções dinâmicas
 
-  const handleOptionSelect = () => {
-    
-    setIsModalVisible(true);
-  };
+const handleOptionSelect = (option: React.SetStateAction<string>) => {
+  setSelectedOption(option);
+  setIsModalVisible(true);
 
+  if (option === 'Tete') {
+    setModalOptions([
+      { key: 'Tete' },
+      { key: 'Fórmula' },
+      { key: 'Papa' },
+      { key: 'Mingau' },
+    ]);
+  } else if (option === 'Coco') {
+    setModalOptions([
+      { key: 'Coco' },
+      { key: 'Xixi' },
+      { key: 'Gases' },
+      { key: 'Regurgitou' },
+    ]);
+  } else if (option === 'Banho') {
+    setModalOptions([
+      { key: 'Banho' },
+      { key: 'Hidratou' },
+      { key: 'Cortou as unhas' },
+      { key: 'Cortou o cabelo' },
+    ]);
+  } else if (option === 'Remédio') {
+    setModalOptions([
+      { key: 'Remédio' },
+      { key: 'Vitamina' },
+      { key: 'Suplemento' },
+      { key: 'Homeopatia' },
+    ]);
+  }
+};
+  
   const handleCloseModal = () => {
     setIsModalVisible(false);
   };
 
-
-
+  // Dados da FlatList
+  
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bem-vinda ao Diário da Mamãe!</Text>
       <Text style={styles.subtitle}>Sua jornada começa aqui.</Text>
-      <View 
-      style={{height:20,
-       flexDirection:'row',
-       marginTop:35,
-       paddingHorizontal:10,
-       justifyContent: 'space-between' // separa os botões
-       }}>
-        <View style={{flexDirection:'row', flex:1, justifyContent: 'space-between'}}>
-          <TouchableOpacity onPress={() => { handleOptionSelect(); setSelectedOption('tete'); }} 
-          style={
-            {width:"95%",
-              height:70,
-             padding:10,
-              backgroundColor:'#fff',
-                borderWidth:2,
-                borderColor:'#fa0fb3ff',
-               borderRadius:10,
-               flexDirection:'row',
-              
-               alignItems:'center',
-                justifyContent:'center',
-               
-               
-              
-               
-               }}>
-                <Image source={require('../../assets/images/mama.png')} style={{width:40, height:40, marginRight:10}} />
-            <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Tete</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{  flex:1,justifyContent: 'space-between' }}>
-          <TouchableOpacity onPress={() => { handleOptionSelect(); setSelectedOption('coco'); }} 
-          style={
-            {width:"95%",
-             height:70,
-              backgroundColor:'#fff',
-               borderRadius:10,
-               borderWidth:2, 
-               borderColor:'#fa0fb3ff',
-               padding:10,
 
-               alignSelf:'center',
-               alignItems:'center',
-                justifyContent:'center',
-                flexDirection:'row',
-                
-                
-               
-               }}>
-                <Image source={require('../../assets/images/coco.png')} style={{width:40, height:40, marginRight:10}} />
-            <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Coco</Text>
-          </TouchableOpacity>
-        </View>
-        
-      </View>
-      <View style={{height:20, flexDirection:'row',marginTop:85,paddingHorizontal:10,justifyContent: 'space-between' }}>
-        <View style={{flexDirection:'row', flex:1}}>
-          <TouchableOpacity onPress={() => { handleOptionSelect(); setSelectedOption('banho'); }} 
-          style={
-            {width:"95%",
-              height:70,
-             padding:10,
-              backgroundColor:'#fff',
-               borderRadius:10,
-               borderWidth:2,
-               borderColor:'#fa0fb3ff',
-               alignItems:'center',
-                justifyContent:'center',
-                flexDirection:'row',
-               
-               
-              
-               
-               }}>
-                <Image source={require('../../assets/images/banho.png')} style={{width:40, height:40, marginRight:10}} />
-            <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Banho</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{  flex:1 }}>
-          <TouchableOpacity onPress={() => { handleOptionSelect(); setSelectedOption('remédio'); }  } 
-          style={
-            {width:"95%",
-             height:70,
-              backgroundColor:'#fff',
-               borderRadius:10,
-               padding:10,
-               borderWidth:2,
-               borderColor:'#fa0fb3ff',
-               alignSelf:'center',
-               alignItems:'center',
-                justifyContent:'center',
-                flexDirection:'row',
-                
-                
-               
-               }}>
-                <Image source={require('../../assets/images/frasco.png')} style={{width:40, height:40, marginRight:10}} />
-            <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Remédio</Text>
-          </TouchableOpacity>
-        </View>
-        
+      {/* Primeira linha */}
+      <View style={styles.row}>
+        <TouchableOpacity
+          onPress={() => handleOptionSelect('Tete')}
+          style={styles.button}
+        >
+          <Image source={require('../../assets/images/mama.png')} style={styles.icon} />
+          <Text style={styles.text}>Tete</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => handleOptionSelect('Coco')}
+          style={styles.button}
+        >
+          <Image source={require('../../assets/images/coco.png')} style={styles.icon} />
+          <Text style={styles.text}>Coco</Text>
+        </TouchableOpacity>
       </View>
 
+      {/* Segunda linha */}
+      <View style={[styles.row, { marginTop: 45 }]}>
+        <TouchableOpacity
+          onPress={() => handleOptionSelect('Banho')}
+          style={styles.button}
+        >
+          <Image source={require('../../assets/images/banho.png')} style={styles.icon} />
+          <Text style={styles.text}>Banho</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => handleOptionSelect('Remédio')}
+          style={styles.button}
+        >
+          <Image source={require('../../assets/images/frasco.png')} style={styles.icon} />
+          <Text style={styles.text}>Remédio</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Modal com FlatList */}
       <Modal
         visible={ismodalVisible}
         animationType="slide"
         transparent={true}
-        onRequestClose={handleCloseModal}>
-    <View style={styles.container}>
-      <Text style={styles.subtitle}>Você selecionou: {selectedOption}</Text>
-      <Text style={styles.title}>Escolha uma opção</Text>
-      <TouchableOpacity onPress={handleCloseModal} style={{marginTop:20, padding:10, backgroundColor:'#fa0fb3ff', borderRadius:5}}>
-        <Text style={{color:'#fff', fontWeight:'bold'}}>Fechar</Text>
-      </TouchableOpacity>
-    </View>
-        </Modal>
+        onRequestClose={handleCloseModal}
+      >
+        <View style={styles.containerModal}>
+          <Text style={styles.title}>Você selecionou: {selectedOption}</Text>
+          <Text style={styles.subtitle}>Escolha uma opção</Text>
+
+          <FlatList
+            showsVerticalScrollIndicator={false}
+  data={modalOptions}
+  keyExtractor={(item) => item.key}
+  renderItem={({ item }) => (
+    <TouchableOpacity
+      onPress={() => alert(`Você clicou em ${item.key}`)}
+      style={styles.modalButton}
+    >
+      <Text style={styles.text}>{item.key}</Text>
+    </TouchableOpacity>
+  )}
+/>
+
+          <TouchableOpacity
+            onPress={handleCloseModal}
+            style={styles.closeButton}
+          >
+            <Text style={{ color: '#fff', fontWeight: 'bold' }}>Fechar</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -151,8 +136,69 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 5,
   },
+  containerModal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 20,
+    marginTop: 150,
+    marginBottom: 150,
+    marginHorizontal: 10,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#fa0fb3ff',
+  },
+  row: {
+    flexDirection: 'row',
+    marginTop: 35,
+    paddingHorizontal: 10,
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  button: {
+    flex: 1,
+    height: 70,
+    marginHorizontal: 5,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#fa0fb3ff',
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 10,
+  },
+  modalButton: {
+    width: 200,
+    height: 60,
+    marginTop: 10,
+    backgroundColor: '#fff',
+    borderWidth: 2,
+    borderColor: '#fa0fb3ff',
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  closeButton: {
+    marginTop: 30,
+    padding: 12,
+    backgroundColor: '#fa0fb3ff',
+    borderRadius: 8,
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
+  },
+  text: {
+    color: '#fa0fb3ff',
+    fontWeight: 'bold',
+    fontSize: 22,
+  },
   title: {
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: 'bold',
     marginBottom: 12,
   },
