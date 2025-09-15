@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 
+
 // Exemplo de dados de banhos
 const banhos = [
     { id: '1', data: '2024-06-01', hora: '08:00', observacao: 'Banho tranquilo' },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView, Touchable, TouchableOpacity } from 'react-native';
 
 const EditProfileScreen = () => {
     const [name, setName] = useState('');
@@ -39,7 +39,9 @@ const EditProfileScreen = () => {
                 multiline
                 numberOfLines={4}
             />
-            <Button title="Salvar" onPress={handleSave} />
+            <TouchableOpacity onPress={handleSave} style={styles.button}>
+                <Text style={{ color: '#ff69b4', fontWeight: 'bold' }}>Salvar</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -74,6 +76,15 @@ const styles = StyleSheet.create({
     bioInput: {
         height: 100,
         textAlignVertical: 'top',
+    },
+    button: {
+        backgroundColor: '#fff',
+        padding: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        borderColor: '#ff69b4',
+        borderWidth: 2,
+        marginTop: 14,
     },
 });
 
