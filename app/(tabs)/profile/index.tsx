@@ -44,6 +44,25 @@ export default function Profile() {
         <Text style={{ fontSize: 18, color: "#f55bd3ff" }}>Relatar Problema</Text>
         <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
       </TouchableOpacity>
+      
+      <TouchableOpacity style={
+                  {width:"95%",
+                   height:70,
+                    backgroundColor:'#fff',
+                     borderRadius:10,
+                     borderColor:'#fa0fb3ff',
+                     borderWidth:2,
+                     alignSelf:'center',
+                      alignItems:'center',
+                      padding:10,
+                      marginBottom:20,
+                      marginTop:20,
+
+                      flexDirection:'row',
+                      }} onPress={() => router.push("/profile/not")}>
+        <Text style={{ fontSize: 18, color: "#f55bd3ff" }}>Notificações</Text>
+        <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
+      </TouchableOpacity>
     </View>
   );
 }
