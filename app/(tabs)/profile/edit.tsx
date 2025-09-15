@@ -40,7 +40,7 @@ const EditProfileScreen = () => {
                 numberOfLines={4}
             />
             <TouchableOpacity onPress={handleSave} style={styles.button}>
-                <Text style={{ color: '#ff69b4', fontWeight: 'bold' }}>Salvar</Text>
+                <Text style={{ color: '#ff69b4', fontWeight: 'bold', fontSize: 20 }}>Salvar</Text>
             </TouchableOpacity>
         </View>
     );
@@ -79,12 +79,14 @@ const styles = StyleSheet.create({
     },
     button: {
         backgroundColor: '#fff',
-        padding: 15,
+        padding: 8,
         borderRadius: 8,
         alignItems: 'center',
         borderColor: '#ff69b4',
         borderWidth: 2,
         marginTop: 14,
+        width: '80%',
+        alignSelf: 'center',
     },
 });
 

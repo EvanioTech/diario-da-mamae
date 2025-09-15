@@ -36,7 +36,7 @@ const ReportBugScreen = () => {
                 numberOfLines={5}
             />
             <TouchableOpacity onPress={handleSubmit} style={styles.button}>
-                <Text style={{ color: '#ff69b4', fontWeight: 'bold' }}>Enviar</Text>
+                <Text style={{ color: '#ff69b4', fontWeight: 'bold', fontSize: 20 }}>Enviar</Text>
             </TouchableOpacity>
         </View>
     );
@@ -75,6 +75,8 @@ const styles = StyleSheet.create({
         borderColor: '#ff69b4',
         borderWidth: 2,
         marginTop: 14,
+        width: '80%',
+        alignSelf: 'center',
     },
 });
 
