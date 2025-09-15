@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 
 const ReportBugScreen = () => {
     const [description, setDescription] = useState('');
@@ -35,7 +35,9 @@ const ReportBugScreen = () => {
                 multiline
                 numberOfLines={5}
             />
-            <Button title="Enviar" onPress={handleSubmit} />
+            <TouchableOpacity onPress={handleSubmit} style={styles.button}>
+                <Text style={{ color: '#ff69b4', fontWeight: 'bold' }}>Enviar</Text>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -64,6 +66,15 @@ const styles = StyleSheet.create({
     textArea: {
         height: 100,
         textAlignVertical: 'top',
+    },
+    button: {
+        backgroundColor: '#fff',
+        padding: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        borderColor: '#ff69b4',
+        borderWidth: 2,
+        marginTop: 14,
     },
 });
 
