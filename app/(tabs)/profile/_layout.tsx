@@ -15,7 +15,11 @@ export default function ProfileLayout() {
         name="report"
         options={{ title: "Relatar Problema" }}
       />
-      
+      <Stack.Screen
+        name="not"
+        options={{ title: "Notificações" }}
+      />
+
     </Stack>
   );
 }
