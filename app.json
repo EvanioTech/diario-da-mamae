@@ -44,6 +44,11 @@
       "router": {},
       "eas": {
         "projectId": "383b4bcf-bfa4-4c7a-99ad-582b8aed3f4c"
+      },
+      "expo-camera": {
+        "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+        "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+        "recordAudioAndroid": true
       }
     }
   }

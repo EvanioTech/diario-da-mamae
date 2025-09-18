@@ -59,8 +59,8 @@ export default function Profile() {
                       marginTop:20,
 
                       flexDirection:'row',
-                      }} onPress={() => router.push("/profile/not")}>
-        <Text style={{ fontSize: 18, color: "#f55bd3ff" }}>Notificações</Text>
+                      }} onPress={() => router.push("/profile/camera")}>
+        <Text style={{ fontSize: 18, color: "#f55bd3ff" }}>Camera</Text>
         <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
       </TouchableOpacity>
     </View>

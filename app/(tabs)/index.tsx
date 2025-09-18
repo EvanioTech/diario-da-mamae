@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, FlatList, Alert } from 'react-native';
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState('');
@@ -108,7 +108,10 @@ const handleOptionSelect = (option: React.SetStateAction<string>) => {
   keyExtractor={(item) => item.key}
   renderItem={({ item }) => (
     <TouchableOpacity
-      onPress={() => alert(`Você clicou em ${item.key}`)}
+      onPress={() => Alert.alert(`Você deseja adicionar ${item.key} ao diário?`, '', [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Adicionar', onPress: () => console.log(`Adicionado: ${item.key}`) },
+      ])}
       style={styles.modalButton}
     >
       <Text style={styles.text}>{item.key}</Text>

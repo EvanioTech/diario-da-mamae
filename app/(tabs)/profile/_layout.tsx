@@ -16,8 +16,8 @@ export default function ProfileLayout() {
         options={{ title: "Relatar Problema" }}
       />
       <Stack.Screen
-        name="not"
-        options={{ title: "Notificações" }}
+        name="camera"
+        options={{ title: "Camera" }}
       />
 
     </Stack>
