@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, Touchable, TouchableOpacity } from 'react-native';
-import { Stack } from 'expo-router';
-import { Link, router} from 'expo-router';
+import { Stack , Link, router} from 'expo-router';
 
 const SignUp = () => {
     const [name, setName] = useState('');
