@@ -29,7 +29,7 @@ const ExploreScreen = () => {
                       }}>
                         <Image source={require('../../../assets/images/mama.png')} style={{width:40, height:40, marginRight:10}} />
                   <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Tete</Text>
-                  <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
+                  <AntDesign name="caret-right" size={28} color="#fa0fb3ff" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
                 </TouchableOpacity>
               
               
@@ -52,7 +52,7 @@ const ExploreScreen = () => {
 
                      }}><Image source={require('../../../assets/images/coco.png')} style={{width:40, height:40, marginRight:10}} />
                   <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Coco</Text>
-                  <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
+                  <AntDesign name="caret-right" size={28} color="#fa0fb3ff" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
                 </TouchableOpacity>
               
               
@@ -79,7 +79,7 @@ const ExploreScreen = () => {
                      }}>
                       <Image source={require('../../../assets/images/banho.png')} style={{width:40, height:40, marginRight:10}} />
                   <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Banho</Text>
-                  <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
+                  <AntDesign name="caret-right" size={28} color="#fa0fb3ff" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
                 </TouchableOpacity>
               
               
@@ -102,7 +102,7 @@ const ExploreScreen = () => {
                      }}>
                       <Image source={require('../../../assets/images/frasco.png')} style={{width:40, height:40, marginRight:10, marginLeft:10}} />
                   <Text style={{color:'#fa0fb3ff', fontWeight:'bold',fontSize:26}}>Remédios</Text>
-                  <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
+                  <AntDesign name="caret-right" size={28} color="#fa0fb3ff" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
                 </TouchableOpacity>
               
               

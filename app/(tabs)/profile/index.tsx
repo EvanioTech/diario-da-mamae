@@ -24,7 +24,7 @@ export default function Profile() {
                       }}
       onPress={() => router.push("/profile/edit")}>
         <Text style={{ fontSize: 18, color: "#f55bd3ff" }}>Editar Perfil</Text>
-        <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
+        <AntDesign name="edit" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
       </TouchableOpacity>
       <TouchableOpacity style={
                   {width:"95%",
@@ -42,7 +42,7 @@ export default function Profile() {
                       flexDirection:'row',
                       }} onPress={() => router.push("/profile/report")}>
         <Text style={{ fontSize: 18, color: "#f55bd3ff" }}>Relatar Problema</Text>
-        <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
+        <AntDesign name="bug" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
       </TouchableOpacity>
       
       <TouchableOpacity style={
@@ -61,7 +61,7 @@ export default function Profile() {
                       flexDirection:'row',
                       }} onPress={() => router.push("/profile/camera")}>
         <Text style={{ fontSize: 18, color: "#f55bd3ff" }}>Camera</Text>
-        <AntDesign name="arrowright" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
+        <AntDesign name="camera" size={28} color="black" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
       </TouchableOpacity>
     </View>
   );
