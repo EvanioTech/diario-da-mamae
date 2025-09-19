@@ -22,10 +22,17 @@ const SignUp = () => {
             <Text style={styles.title}>Criar Conta</Text>
             <TextInput
                 style={styles.input}
-                placeholder="Nome"
+                placeholder="Seu Nome"
                 value={name}
                 onChangeText={setName}
             />
+            <TextInput
+                style={styles.input}
+                placeholder="Nome do bebê"
+                value={name}
+                onChangeText={setName}
+            />
+            
             <TextInput
                 style={styles.input}
                 placeholder="E-mail"
@@ -37,6 +44,13 @@ const SignUp = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Senha"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Confirme a Senha"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
