@@ -1,20 +1,68 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Touchable, TouchableOpacity } from 'react-native';
-import { Stack , Link, router} from 'expo-router';
+// SignUp.tsx
+import React, { useEffect, useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { Stack, Link, router } from 'expo-router';
+import {db, initDB, getFirstAsync} from '../db/db';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+// Initialize the database when the app starts
+
+interface User {
+    id?: number;
+    nome: string;
+    email: string;
+    senha: string;
+    babyName: string;
+}
 
 const SignUp = () => {
     const [name, setName] = useState('');
+    const [babyName, setBabyName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
 
-    const handleSignUp = () => {
-        // Replace with your sign-up logic (API call, validation, etc.)
-        if (!name || !email || !password) {
-            Alert.alert('Erro', 'Por favor, preencha todos os campos.');
-            return;
-        }
-        Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-    };
+    useEffect(() => {
+        initDB();
+    }, []);
+
+    const handleSignUp = async () => {
+  if (!name || !babyName || !email || !password || !confirmPassword) {
+    Alert.alert('Erro', 'Por favor, preencha todos os campos.');
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    Alert.alert('Erro', 'As senhas não coincidem.');
+    return;
+  }
+
+  try {
+    await db.runAsync(
+      'INSERT INTO users (name, email, senha, babyName) VALUES (?, ?, ?, ?);',
+      [name, email, password, babyName]
+    );
+
+    const usuario: User | null = await getFirstAsync<User>(
+      `SELECT * FROM users WHERE email = ? AND senha = ?`,
+      [email, password]
+    );
+
+    if (!usuario) {
+      Alert.alert('Erro', 'Não foi possível recuperar o usuário cadastrado.');
+      return;
+    }
+
+    await AsyncStorage.setItem('usuarioLogado', email);
+
+    Alert.alert('Sucesso', 'Conta criada com sucesso!');
+    router.push('/(tabs)');
+  } catch (error) {
+    Alert.alert('Erro', 'Não foi possível realizar o cadastro. Tente novamente.');
+    console.error(error);
+  }
+};
 
     return (
         <View style={styles.container}>
@@ -28,10 +76,9 @@ const SignUp = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Nome do bebê"
-                value={name}
-                onChangeText={setName}
+                value={babyName}
+                onChangeText={setBabyName}
             />
-            
             <TextInput
                 style={styles.input}
                 placeholder="E-mail"
@@ -50,17 +97,17 @@ const SignUp = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Confirme a Senha"
-                value={password}
-                onChangeText={setPassword}
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
                 secureTextEntry
             />
-            <TouchableOpacity 
-            style={{backgroundColor:'#f539ccff',padding:12,borderRadius:8,width:'60%',alignItems:'center', marginTop:20,  alignSelf:'center'}} 
-            onPress={() => router.push('/(tabs)')}
+            <TouchableOpacity
+                style={{ backgroundColor: '#f539ccff', padding: 12, borderRadius: 8, width: '60%', alignItems: 'center', marginTop: 20, alignSelf: 'center' }}
+                onPress={handleSignUp}
             >
-              <Text style={{color:'#fff', fontWeight:'bold'}}>Cadastrar</Text>
+                <Text style={{ color: '#fff', fontWeight: 'bold' }}>Cadastrar</Text>
             </TouchableOpacity>
-            <Text style={{marginTop:20}}>Já tem uma conta? <Text style={{color:'#cc11a3ff', fontWeight:'bold'}} onPress={() => router.push('/signIn')}>Entrar</Text></Text>
+            <Text style={{ marginTop: 20, textAlign: 'center' }}>Já tem uma conta? <Text style={{ color: '#cc11a3ff', fontWeight: 'bold' }} onPress={() => router.push('/signIn')}>Entrar</Text></Text>
         </View>
     );
 };

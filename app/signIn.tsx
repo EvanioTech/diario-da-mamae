@@ -1,5 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { db } from '@/db/db';
+import { Stack, Link, router } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+type User = {
+                id: number;
+                email: string;
+                senha: string;
+                // add other fields as needed
+            };
+
+
 
 const SignIn: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -15,15 +28,27 @@ const SignIn: React.FC = () => {
             return;
         }
         try {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            Alert.alert('Sucesso', 'Login realizado com sucesso!');
-        } catch (error) {
-            Alert.alert('Erro', 'Falha ao fazer login.');
+            
+            
+            const user: User | null = await db.getFirstSync(
+                'SELECT * FROM users WHERE email = ? AND senha = ?',
+                [email, password]
+            );
+            if (user) {
+                await AsyncStorage.setItem('usuarioLogado', email);
+                Alert.alert('Sucesso', 'Login realizado com sucesso!');
+                router.push('/(tabs)');
+            } else {
+                Alert.alert('Erro', 'Credenciais inválidas.');
+            }
+        }
+        catch (error) {
+            console.error('Erro ao fazer login:', error);
+            Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login.');
         } finally {
             setLoading(false);
         }
-    };
+    }
 
     return (
         <View style={styles.container}>

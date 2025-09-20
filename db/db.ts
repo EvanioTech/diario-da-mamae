@@ -1,66 +1,69 @@
-// db.ts
-import * as SQLite from 'expo-sqlite';
+import { openDatabaseSync, type SQLiteDatabase } from "expo-sqlite";
 
-// Abrir/Cria o banco de dados
-const db = SQLite.openDatabase('diarioMamae.db');
+export const db: SQLiteDatabase = openDatabaseSync("diarioMamae_v1.db");
 
-// Inicializa o banco de dados e cria as tabelas se não existirem
-export const initDB = () => {
-  db.transaction(tx => {
-    // Tabela para armazenar usuários
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS user (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT NOT NULL,
-        senha TEXT NOT NULL,
-        nome_bebe TEXT NOT NULL,
-        sexo TEXT CHECK(sexo IN ('masculino','feminino')) NOT NULL
-      );`
+// Criar tabelas e garantir usuário admin
+export const initDB = async () => {
+  await db.execAsync(`
+    PRAGMA foreign_keys = ON;
+
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE,
+      senha TEXT NOT NULL,
+      babyName TEXT NOT NULL
     );
 
-    // Tabela para armazenar eventos selecionados no modal
-    tx.executeSql(
-      `CREATE TABLE IF NOT EXISTS evento (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        key_evento TEXT NOT NULL,
-        data TEXT NOT NULL
-      );`
+    CREATE TABLE IF NOT EXISTS evento (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      key_evento TEXT NOT NULL,
+      data TEXT NOT NULL
     );
-  });
+  `);
+};
+
+// ---- Funções de Ajuda ----
+export const runAsync = async (sql: string, params: any[] = []) => {
+  return db.runAsync(sql, params);
+};
+
+export const getFirstAsync = async <T = any>(
+  sql: string,
+  params: any[] = []
+): Promise<T | null> => {
+  const result = await db.getFirstAsync<T>(sql, params);
+  return result ?? null;
+};
+
+// ---- Funções para o App ----
+// Função para inserir um usuário
+export const addUser = async (email: string, senha: string, babyName: string) => {
+  try {
+    const result = await db.runAsync(
+      'INSERT INTO users (name, email, senha, babyName) VALUES (?,  ?, ?, ?);',
+      [name, email, senha, babyName]
+    );
+    console.log('Usuário registrado:', result);
+    return result.changes;
+  } catch (error) {
+    console.log('Erro ao registrar usuário:', error);
+    throw error;
+  }
 };
 
 // Função para inserir um evento
-export const addEvento = (key_evento: string) => {
+export const addEvento = async (key_evento: string) => {
   const data = new Date().toISOString();
-  db.transaction(tx => {
-    tx.executeSql(
+  try {
+    const result = await db.runAsync(
       'INSERT INTO evento (key_evento, data) VALUES (?, ?);',
-      [key_evento, data],
-      (_, result) => {
-        console.log('Evento registrado:', result);
-      },
-      (_, error) => {
-        console.log('Erro ao registrar evento:', error);
-        return false;
-      }
+      [key_evento, data]
     );
-  });
+    console.log('Evento registrado:', result);
+    return result.changes;
+  } catch (error) {
+    console.log('Erro ao registrar evento:', error);
+    throw error;
+  }
 };
-
-// Função para inserir um usuário
-export const addUser = (email: string, senha: string, nome_bebe: string, sexo: 'masculino' | 'feminino') => {
-  db.transaction(tx => {
-    tx.executeSql(
-      'INSERT INTO user (email, senha, nome_bebe, sexo) VALUES (?, ?, ?, ?);',
-      [email, senha, nome_bebe, sexo],
-      (_, result) => console.log('Usuário registrado:', result),
-      (_, error) => {
-        console.log('Erro ao registrar usuário:', error);
-        return false;
-      }
-    );
-  });
-};
-
-// Exporta o db para consultas futuras
-export default db;
