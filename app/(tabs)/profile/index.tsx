@@ -1,8 +1,55 @@
 import { View, Text, Button, TouchableOpacity } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import {db, initDB,getFirstAsync, runAsync} from '../../../db/db';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useEffect, useState } from "react";
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  senha: string;
+  babyName: string;
+};
 
 export default function Profile() {
+const [user, setUser] = useState<User | null>(null);
+
+
+  const fetchData = async () => {
+    try {
+      await initDB();
+      const name = await AsyncStorage.getItem("usuarioLogado");
+      if (!name) return;
+
+      const email = await AsyncStorage.getItem("emailUsuarioLogado");
+      if (!email) return;
+
+      const usuario = await getFirstAsync<User>(
+        "SELECT * FROM users WHERE name = ? AND email = ?",
+        [name, email]
+      );
+      if (usuario) {
+        setUser(usuario);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar usuário:", error);
+    }
+  };
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData();
+    }, [])
+  );
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("usuarioLogado");
+    router.replace("/signIn");
+  };
+
+  
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center",  }}>
       <Text style={{ fontSize: 24, fontWeight: "bold", color: "#fa0fb3ff" }}>Meu Perfil</Text>
@@ -63,6 +110,23 @@ export default function Profile() {
         <Text style={{ fontSize: 18, color: "#f55bd3ff" }}>Camera</Text>
         <AntDesign name="camera" size={28} color="#fa0fb3ff" style={{ justifyContent: 'flex-end', marginLeft: 'auto' }} />
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={handleLogout}
+        style={{
+          backgroundColor: "#fa0fb3ff",
+          padding: 12,
+          borderRadius: 8,
+          width: "50%",
+          alignItems: "center",
+          marginTop: 20,
+        }}
+      >
+        <Text style={{ color: "#fff", fontWeight: "bold" }}>Sair</Text>
+      </TouchableOpacity>
+      <View style={{ position: "absolute", bottom: 20, alignItems: "center" }}>
+        <Text style={{ fontSize: 12, color: "#999" }}>App desenvolvido por Octadroid</Text>
+        <Text style={{ fontSize: 12, color: "#999" }}>Versão 1.0.0</Text>
+      </View>
     </View>
   );
 }
