@@ -38,7 +38,7 @@ export const getFirstAsync = async <T = any>(
 
 // ---- Funções para o App ----
 // Função para inserir um usuário
-export const addUser = async (email: string, senha: string, babyName: string) => {
+export const addUser = async (name: string, email: string, senha: string, babyName: string) => {
   try {
     const result = await db.runAsync(
       'INSERT INTO users (name, email, senha, babyName) VALUES (?,  ?, ?, ?);',
