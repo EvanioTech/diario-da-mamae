@@ -1,6 +1,6 @@
 // SignUp.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import {  router } from 'expo-router';
 import {db, initDB, getFirstAsync} from '../db/db';
 import AsyncStorage from '@react-native-async-storage/async-storage';
