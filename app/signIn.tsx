@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { db } from '@/db/db';
-import { Stack, Link, router } from 'expo-router';
+import {  router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
