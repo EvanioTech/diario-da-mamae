@@ -1,5 +1,5 @@
 import { View,Text,Image, TouchableOpacity, ActivityIndicator } from "react-native";
-import { Link, router } from "expo-router";
+import {  router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
