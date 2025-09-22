@@ -1,52 +1,59 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Modal, FlatList, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Modal,
+  FlatList,
+  Alert,
+} from 'react-native';
+import { addEvento } from '../../db/db'; // ajuste o caminho se necessário
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState('');
-const [ismodalVisible, setIsModalVisible] = useState(false);
-const [modalOptions, setModalOptions] = useState<{ key: string }[]>([]); // <-- aqui guardamos as opções dinâmicas
+  const [ismodalVisible, setIsModalVisible] = useState(false);
+  const [modalOptions, setModalOptions] = useState<{ key: string }[]>([]);
 
-const handleOptionSelect = (option: React.SetStateAction<string>) => {
-  setSelectedOption(option);
-  setIsModalVisible(true);
+  const handleOptionSelect = (option: string) => {
+    setSelectedOption(option);
+    setIsModalVisible(true);
 
-  if (option === 'Tete') {
-    setModalOptions([
-      { key: 'Tete' },
-      { key: 'Fórmula' },
-      { key: 'Papa' },
-      { key: 'Mingau' },
-    ]);
-  } else if (option === 'Coco') {
-    setModalOptions([
-      { key: 'Coco' },
-      { key: 'Xixi' },
-      { key: 'Gases' },
-      { key: 'Regurgitou' },
-    ]);
-  } else if (option === 'Banho') {
-    setModalOptions([
-      { key: 'Banho' },
-      { key: 'Hidratou' },
-      { key: 'Cortou as unhas' },
-      { key: 'Cortou o cabelo' },
-    ]);
-  } else if (option === 'Remédio') {
-    setModalOptions([
-      { key: 'Remédio' },
-      { key: 'Vitamina' },
-      { key: 'Suplemento' },
-      { key: 'Homeopatia' },
-    ]);
-  }
-};
-  
+    if (option === 'Tete') {
+      setModalOptions([
+        { key: 'Tete' },
+        { key: 'Fórmula' },
+        { key: 'Papa' },
+        { key: 'Mingau' },
+      ]);
+    } else if (option === 'Coco') {
+      setModalOptions([
+        { key: 'Coco' },
+        { key: 'Xixi' },
+        { key: 'Gases' },
+        { key: 'Regurgitou' },
+      ]);
+    } else if (option === 'Banho') {
+      setModalOptions([
+        { key: 'Banho' },
+        { key: 'Hidratou' },
+        { key: 'Cortou as unhas' },
+        { key: 'Cortou o cabelo' },
+      ]);
+    } else if (option === 'Remédio') {
+      setModalOptions([
+        { key: 'Remédio' },
+        { key: 'Vitamina' },
+        { key: 'Suplemento' },
+        { key: 'Homeopatia' },
+      ]);
+    }
+  };
+
   const handleCloseModal = () => {
     setIsModalVisible(false);
   };
-
-  // Dados da FlatList
-  
 
   return (
     <View style={styles.container}>
@@ -59,7 +66,10 @@ const handleOptionSelect = (option: React.SetStateAction<string>) => {
           onPress={() => handleOptionSelect('Tete')}
           style={styles.button}
         >
-          <Image source={require('../../assets/images/mama.png')} style={styles.icon} />
+          <Image
+            source={require('../../assets/images/mama.png')}
+            style={styles.icon}
+          />
           <Text style={styles.text}>Tete</Text>
         </TouchableOpacity>
 
@@ -67,7 +77,10 @@ const handleOptionSelect = (option: React.SetStateAction<string>) => {
           onPress={() => handleOptionSelect('Coco')}
           style={styles.button}
         >
-          <Image source={require('../../assets/images/coco.png')} style={styles.icon} />
+          <Image
+            source={require('../../assets/images/coco.png')}
+            style={styles.icon}
+          />
           <Text style={styles.text}>Coco</Text>
         </TouchableOpacity>
       </View>
@@ -78,7 +91,10 @@ const handleOptionSelect = (option: React.SetStateAction<string>) => {
           onPress={() => handleOptionSelect('Banho')}
           style={styles.button}
         >
-          <Image source={require('../../assets/images/banho.png')} style={styles.icon} />
+          <Image
+            source={require('../../assets/images/banho.png')}
+            style={styles.icon}
+          />
           <Text style={styles.text}>Banho</Text>
         </TouchableOpacity>
 
@@ -86,12 +102,15 @@ const handleOptionSelect = (option: React.SetStateAction<string>) => {
           onPress={() => handleOptionSelect('Remédio')}
           style={styles.button}
         >
-          <Image source={require('../../assets/images/frasco.png')} style={styles.icon} />
+          <Image
+            source={require('../../assets/images/frasco.png')}
+            style={styles.icon}
+          />
           <Text style={styles.text}>Remédio</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Modal com FlatList */}
+      {/* Modal com opções dinâmicas */}
       <Modal
         visible={ismodalVisible}
         animationType="slide"
@@ -104,25 +123,40 @@ const handleOptionSelect = (option: React.SetStateAction<string>) => {
 
           <FlatList
             showsVerticalScrollIndicator={false}
-  data={modalOptions}
-  keyExtractor={(item) => item.key}
-  renderItem={({ item }) => (
-    <TouchableOpacity
-      onPress={() => Alert.alert(`Você deseja adicionar ${item.key} ao diário?`, '', [
-        { text: 'Cancelar', style: 'cancel' },
-        { text: 'Adicionar', onPress: () => console.log(`Adicionado: ${item.key}`) },
-      ])}
-      style={styles.modalButton}
-    >
-      <Text style={styles.text}>{item.key}</Text>
-    </TouchableOpacity>
-  )}
-/>
+            data={modalOptions}
+            keyExtractor={(item) => item.key}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                onPress={() =>
+                  Alert.alert(
+                    `Você deseja adicionar ${item.key} ao diário?`,
+                    '',
+                    [
+                      { text: 'Cancelar', style: 'cancel' },
+                      {
+                        text: 'Adicionar',
+                        onPress: async () => {
+                          try {
+                            await addEvento(item.key); // Salvar no SQLite
+                            Alert.alert('Evento adicionado com sucesso!');
+                            setIsModalVisible(false);
+                          } catch (e) {
+                            Alert.alert('Erro ao adicionar evento');
+                            console.error(e);
+                          }
+                        },
+                      },
+                    ]
+                  )
+                }
+                style={styles.modalButton}
+              >
+                <Text style={styles.text}>{item.key}</Text>
+              </TouchableOpacity>
+            )}
+          />
 
-          <TouchableOpacity
-            onPress={handleCloseModal}
-            style={styles.closeButton}
-          >
+          <TouchableOpacity onPress={handleCloseModal} style={styles.closeButton}>
             <Text style={{ color: '#fff', fontWeight: 'bold' }}>Fechar</Text>
           </TouchableOpacity>
         </View>

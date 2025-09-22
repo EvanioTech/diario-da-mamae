@@ -1,66 +1,206 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Alert,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+} from 'react-native';
+import { getAllEventos, deleteEvento, updateEvento, initDB } from '../../../db/db'; // ajuste o caminho
 
-type Feeding = {
-    id: string;
-    time: string;
-    side: 'Esquerda' | 'Direita';
+type Evento = {
+  id: number;
+  key_evento: string;
+  data: string;
 };
 
 export default function TetePage() {
-    const [feedings, setFeedings] = useState<Feeding[]>([]);
+  const [feedings, setFeedings] = useState<Evento[]>([]);
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editedValue, setEditedValue] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-    const addFeeding = (side: 'Esquerda' | 'Direita') => {
-        const now = new Date();
-        setFeedings([
-            {
-                id: now.getTime().toString(),
-                time: now.toLocaleTimeString(),
-                side,
-            },
-            ...feedings,
-        ]);
-    };
+  // Carrega do banco ao abrir a tela
+    useEffect(() => {
+    initDB();
+  }, []);
+  const fetchFeedings = async () => {
+    try {
+      const eventos = await getAllEventos();
+      const alimentacoes = eventos.filter((e: Evento) =>
+        ['Tete', 'Fórmula', 'Papa', 'Mingau'].includes(e.key_evento)
+      );
+      setFeedings(alimentacoes);
+    } catch (e) {
+      console.error('Erro ao buscar alimentações:', e);
+    }
+  };
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Mamadas Registradas</Text>
-            <View style={styles.buttonRow}>
-                <TouchableOpacity
-                    style={[styles.button, { backgroundColor: '#8ecae6' }]}
-                    onPress={() => addFeeding('Esquerda')}
-                >
-                    <Text style={styles.buttonText}>Mama Esquerda</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={[styles.button, { backgroundColor: '#ffb703' }]}
-                    onPress={() => addFeeding('Direita')}
-                >
-                    <Text style={styles.buttonText}>Mama Direita</Text>
-                </TouchableOpacity>
+  useEffect(() => {
+    fetchFeedings();
+  }, []);
+
+  const formatTime = (isoDate: string) => {
+    const date = new Date(isoDate);
+    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const handleDelete = (id: number) => {
+    Alert.alert('Excluir evento', 'Tem certeza que deseja excluir este registro?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: async () => {
+          await deleteEvento(id);
+          await fetchFeedings();
+        },
+      },
+    ]);
+  };
+
+  const handleEdit = (evento: Evento) => {
+    setEditingId(evento.id);
+    setEditedValue(evento.key_evento);
+    setEditModalVisible(true);
+  };
+
+  const confirmEdit = async () => {
+    if (editingId !== null && editedValue.trim()) {
+      await updateEvento(editingId, editedValue.trim());
+      setEditModalVisible(false);
+      setEditingId(null);
+      setEditedValue('');
+      await fetchFeedings();
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Mamadas Registradas</Text>
+
+      <FlatList
+        data={feedings}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.feedingItem}>
+            <View style={{ flex: 1 }}>
+              <Text>
+                {formatTime(item.data)} - {item.key_evento}
+              </Text>
             </View>
-            <FlatList
-                data={feedings}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                    <View style={styles.feedingItem}>
-                        <Text>
-                            {item.time} - {item.side}
-                        </Text>
-                    </View>
-                )}
-                ListEmptyComponent={<Text style={styles.emptyText}>Nenhuma mamada registrada ainda.</Text>}
+            <TouchableOpacity onPress={() => handleEdit(item)} style={styles.actionButton}>
+              <Text style={{ color: '#0077cc' }}>Editar</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.actionButton}>
+              <Text style={{ color: '#cc0000' }}>Excluir</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>Nenhuma mamada registrada ainda.</Text>
+        }
+      />
+
+      {/* Modal de Edição */}
+      <Modal
+        visible={editModalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Editar evento</Text>
+            <TextInput
+              value={editedValue}
+              onChangeText={setEditedValue}
+              style={styles.input}
+              placeholder="Novo nome do evento"
             />
+            <View style={styles.modalButtons}>
+              <TouchableOpacity onPress={() => setEditModalVisible(false)} style={styles.cancelBtn}>
+                <Text style={{ color: '#fff' }}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={confirmEdit} style={styles.saveBtn}>
+                <Text style={{ color: '#fff' }}>Salvar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-    );
+      </Modal>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 40, backgroundColor: '#fff', paddingTop: 160  },
-    title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20, textAlign: 'center' },
-    buttonRow: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 20 },
-    button: { padding: 15, borderRadius: 8 },
-    buttonText: { color: '#222', fontWeight: 'bold' },
-    feedingItem: { padding: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
-    emptyText: { textAlign: 'center', color: '#888', marginTop: 40 },
+  container: { flex: 1, padding: 40, backgroundColor: '#fff', paddingTop: 160 },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  feedingItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  actionButton: {
+    marginLeft: 10,
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#888',
+    marginTop: 40,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: '#000000aa',
+    padding: 30,
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  input: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 6,
+    padding: 10,
+    marginBottom: 15,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  cancelBtn: {
+    backgroundColor: '#888',
+    padding: 10,
+    borderRadius: 6,
+    flex: 1,
+    marginRight: 5,
+    alignItems: 'center',
+  },
+  saveBtn: {
+    backgroundColor: '#0077cc',
+    padding: 10,
+    borderRadius: 6,
+    flex: 1,
+    marginLeft: 5,
+    alignItems: 'center',
+  },
 });
