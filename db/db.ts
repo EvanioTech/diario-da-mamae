@@ -61,23 +61,26 @@ export const addEvento = async (key_evento: string) => {
   }
 };
 
-// inserir coco com imagem possivelmente
 export const addEventoCoco = async (
+  key_evento: "Coco" | "Xixi" | "Gases" | "Regurgitou",
   descricao: string,
-  imagemUri: string | null
+  imagemUri: string | null = null
 ) => {
   const data = new Date().toISOString();
+
   try {
     const result = await db.runAsync(
       `INSERT INTO evento (key_evento, data, descricao, imagemUri) VALUES (?, ?, ?, ?);`,
-      ['Coco', data, descricao, imagemUri]
+      [key_evento, data, descricao, imagemUri]
     );
     return result.changes;
   } catch (error) {
-    console.log("Erro ao inserir evento Coco:", error);
+    console.log("Erro ao inserir evento:", error);
     throw error;
   }
 };
+
+
 
 // pegar todos eventos
 export const getAllEventos = async (): Promise<any[]> => {
@@ -90,21 +93,23 @@ export const getAllEventos = async (): Promise<any[]> => {
   }
 };
 
-// pegar só eventos de Coco
 export const getEventosCoco = async (): Promise<
   { id: number; key_evento: string; data: string; descricao: string | null; imagemUri: string | null }[]
 > => {
   try {
     const rows: any[] = await db.getAllAsync(
-      `SELECT id, key_evento, data, descricao, imagemUri FROM evento WHERE key_evento = ? ORDER BY data DESC;`,
-      ['Coco']
+      `SELECT id, key_evento, data, descricao, imagemUri 
+       FROM evento 
+       WHERE key_evento IN ('Coco','Xixi','Gases','Regurgitou') 
+       ORDER BY data DESC;`
     );
     return rows;
   } catch (error) {
-    console.error('Erro ao buscar eventos Coco:', error);
+    console.error('Erro ao buscar eventos:', error);
     return [];
   }
 };
+  
 
 export const updateEventoCoco = async (
   id: number,
@@ -142,3 +147,7 @@ export const updateEvento = async (id: number, newKeyEvento: string) => {
     throw error;
   }
 };
+function getDBConnection() {
+  throw new Error("Function not implemented.");
+}
+

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -13,11 +13,11 @@ import {
   ScrollView
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import { useFocusEffect } from 'expo-router';
 
 import {
   getEventosCoco,
   updateEventoCoco,
-  addEventoCoco,
   deleteEvento
 } from '../../../db/db'; // ajuste o caminho
 
@@ -32,23 +32,23 @@ type EventoCoco = {
 const CocoPage = () => {
   const [descricao, setDescricao] = useState('');
   const [imagemUri, setImagemUri] = useState<string | null>(null);
-
   const [eventos, setEventos] = useState<EventoCoco[]>([]);
-
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editingEvento, setEditingEvento] = useState<EventoCoco | null>(null);
-
   const [viewImageModalVisible, setViewImageModalVisible] = useState(false);
   const [viewImageUri, setViewImageUri] = useState<string | null>(null);
 
-  useEffect(() => {
-    carregarEventos();
-  }, []);
-
   const carregarEventos = async () => {
-    const ev = await getEventosCoco();
+    const ev = await getEventosCoco(); // agora deve trazer Coco, Xixi, Gases e Regurgitou
     setEventos(ev);
   };
+
+  // Atualiza sempre que a tela voltar a ser visível
+  useFocusEffect(
+    useCallback(() => {
+      carregarEventos();
+    }, [])
+  );
 
   const escolherImagem = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -76,20 +76,6 @@ const CocoPage = () => {
     });
     if (!result.canceled) {
       setImagemUri(result.assets[0].uri);
-    }
-  };
-
-  // Registrar novo evento Coco (já existente com data/hora salvo em Home)
-  const registrarNovaImagem = async (evento: EventoCoco) => {
-    try {
-      // abrir modal de edição, ou simplesmente chamar update
-      await updateEventoCoco(evento.id, evento.descricao ?? '', imagemUri);
-      Alert.alert('Imagem adicionada ao registro!');
-      setImagemUri(null);
-      carregarEventos();
-    } catch (e) {
-      console.error(e);
-      Alert.alert('Erro ao salvar imagem.');
     }
   };
 
@@ -142,7 +128,7 @@ const CocoPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Cocôs Registrados</Text>
+      <Text style={styles.title}>Cocôs / Xixis / Gases / Regurgitos</Text>
 
       <FlatList
         data={eventos}
@@ -151,15 +137,20 @@ const CocoPage = () => {
           <TouchableOpacity style={styles.itemContainer}>
             <View style={{ flex: 1 }}>
               <Text style={styles.itemText}>
-                {item.descricao ?? 'Sem descrição'}
+                {item.key_evento} - {item.descricao ?? 'Sem descrição'}
               </Text>
               <Text style={styles.subText}>
-                {new Date(item.data).toLocaleDateString()}{" "}
-                {new Date(item.data).toLocaleTimeString()}
+                {new Date(item.data).toLocaleDateString('pt-BR')}{" "}
+                {new Date(item.data).toLocaleTimeString('pt-BR', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
               </Text>
             </View>
             {item.imagemUri && (
-              <TouchableOpacity onPress={() => item.imagemUri && abrirModalImagem(item.imagemUri)}>
+              <TouchableOpacity
+                onPress={() => item.imagemUri && abrirModalImagem(item.imagemUri)}
+              >
                 <Image source={{ uri: item.imagemUri }} style={styles.thumbnail} />
               </TouchableOpacity>
             )}
@@ -167,14 +158,17 @@ const CocoPage = () => {
               <TouchableOpacity onPress={() => iniciarEdicao(item)} style={styles.editBtn}>
                 <Text style={styles.editText}>Editar</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => confirmarExclusao(item.id)} style={styles.deleteBtn}>
+              <TouchableOpacity
+                onPress={() => confirmarExclusao(item.id)}
+                style={styles.deleteBtn}
+              >
                 <Text style={styles.deleteText}>Excluir</Text>
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
         )}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhum registro de coco encontrado.</Text>
+          <Text style={styles.emptyText}>Nenhum registro encontrado.</Text>
         }
       />
 
@@ -187,7 +181,7 @@ const CocoPage = () => {
       >
         <ScrollView contentContainerStyle={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Editar Cocô</Text>
+            <Text style={styles.modalTitle}>Editar Registro</Text>
 
             <TextInput
               style={styles.input}
