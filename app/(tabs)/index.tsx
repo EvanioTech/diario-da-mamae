@@ -43,9 +43,9 @@ const Home = () => {
       ]);
     } else if (option === 'Remédio') {
       setModalOptions([
-        { key: 'Remédio' },
-        { key: 'Vitamina' },
-        { key: 'Suplemento' },
+        { key: 'Remédios' },
+        { key: 'Vitaminas' },
+        { key: 'Suplementos' },
         { key: 'Homeopatia' },
       ]);
     }
