@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import {
   View,
   Text,
@@ -23,6 +24,12 @@ export default function TetePage() {
   const [editedValue, setEditedValue] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
 
+  useFocusEffect(
+    useCallback(() => {
+      fetchFeedings();
+    }, [])
+  );
+
   // Carrega do banco ao abrir a tela
     useEffect(() => {
     initDB();
@@ -43,9 +50,11 @@ export default function TetePage() {
     fetchFeedings();
   }, []);
 
-  const formatTime = (isoDate: string) => {
+  const formatDateTime = (isoDate: string) => {
     const date = new Date(isoDate);
-    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const data = date.toLocaleDateString('pt-BR');
+    const hora = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    return `${data} ${hora}`;
   };
 
   const handleDelete = (id: number) => {
@@ -89,7 +98,7 @@ export default function TetePage() {
           <View style={styles.feedingItem}>
             <View style={{ flex: 1 }}>
               <Text>
-                {formatTime(item.data)} - {item.key_evento}
+                {formatDateTime(item.data)} - {item.key_evento}
               </Text>
             </View>
             <TouchableOpacity onPress={() => handleEdit(item)} style={styles.actionButton}>

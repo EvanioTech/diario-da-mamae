@@ -9,7 +9,7 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
-import { addEvento } from '../../db/db'; // ajuste o caminho se necessário
+import { addEvento } from '../../db/db'; 
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState('');
