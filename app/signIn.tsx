@@ -85,6 +85,13 @@ const SignIn: React.FC = () => {
                     {loading ? 'Entrando...' : 'Entrar'}
                 </Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                style={{ marginTop: 20, alignSelf: 'center', borderColor: '#f539ccff', borderWidth: 1, padding: 10, borderRadius: 8 }}
+                onPress={() => router.push('/(tabs)')}
+            >
+                <Text style={{ color: '#f539ccff' }}>Entrar como visitante</Text>
+            </TouchableOpacity>
+            
         </View>
     );
 };

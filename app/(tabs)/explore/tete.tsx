@@ -80,7 +80,7 @@ export default function TetePage() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Mamadas Registradas</Text>
+      <Text style={styles.title}>Alimentações Registradas</Text>
 
       <FlatList
         data={feedings}
@@ -101,7 +101,7 @@ export default function TetePage() {
           </View>
         )}
         ListEmptyComponent={
-          <Text style={styles.emptyText}>Nenhuma mamada registrada ainda.</Text>
+          <Text style={styles.emptyText}>Nenhuma Alimentação registrada ainda.</Text>
         }
       />
 
