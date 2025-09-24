@@ -56,6 +56,7 @@ const SignIn: React.FC = () => {
             <TextInput
                 style={styles.input}
                 placeholder="E-mail"
+                placeholderTextColor={'#999'}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
@@ -64,6 +65,7 @@ const SignIn: React.FC = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Senha"
+                placeholderTextColor={'#999'}
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}

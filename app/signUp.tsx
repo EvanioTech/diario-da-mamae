@@ -70,12 +70,14 @@ const SignUp = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Seu Nome"
+                placeholderTextColor={'#999'}
                 value={name}
                 onChangeText={setName}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Nome do bebê"
+                placeholderTextColor={'#999'}
                 value={babyName}
                 onChangeText={setBabyName}
             />
@@ -86,10 +88,12 @@ const SignUp = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                placeholderTextColor={'#999'}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Senha"
+                placeholderTextColor={'#999'}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -97,6 +101,7 @@ const SignUp = () => {
             <TextInput
                 style={styles.input}
                 placeholder="Confirme a Senha"
+                placeholderTextColor={'#999'}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry
