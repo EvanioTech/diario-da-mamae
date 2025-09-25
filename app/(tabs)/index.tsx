@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   Image,
   Modal,
@@ -10,6 +9,7 @@ import {
   Alert,
 } from 'react-native';
 import { addEvento } from '../../db/db'; 
+import { styles } from '../../helpers/home.tab.styles';
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState('');
@@ -24,8 +24,8 @@ const Home = () => {
       setModalOptions([
         { key: 'Tete' },
         { key: 'Fórmula' },
-        { key: 'Papa' },
         { key: 'Mingau' },
+        { key: 'Frutas' },
       ]);
     } else if (option === 'Coco') {
       setModalOptions([
@@ -165,84 +165,5 @@ const Home = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 5,
-  },
-  containerModal: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    padding: 20,
-    marginTop: 150,
-    marginBottom: 150,
-    marginHorizontal: 10,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#fa0fb3ff',
-  },
-  row: {
-    flexDirection: 'row',
-    marginTop: 35,
-    paddingHorizontal: 10,
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  button: {
-    flex: 1,
-    height: 70,
-    marginHorizontal: 5,
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#fa0fb3ff',
-    borderRadius: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
-  },
-  modalButton: {
-    width: 200,
-    height: 60,
-    marginTop: 10,
-    backgroundColor: '#fff',
-    borderWidth: 2,
-    borderColor: '#fa0fb3ff',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
-  closeButton: {
-    marginTop: 30,
-    padding: 12,
-    backgroundColor: '#fa0fb3ff',
-    borderRadius: 8,
-  },
-  icon: {
-    width: 40,
-    height: 40,
-    marginRight: 10,
-  },
-  text: {
-    color: '#fa0fb3ff',
-    fontWeight: 'bold',
-    fontSize: 22,
-  },
-  title: {
-    fontSize: 23,
-    fontWeight: 'bold',
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-  },
-});
 
 export default Home;

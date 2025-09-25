@@ -38,7 +38,7 @@ export default function TetePage() {
     try {
       const eventos = await getAllEventos();
       const alimentacoes = eventos.filter((e: Evento) =>
-        ['Tete', 'Fórmula', 'Papa', 'Mingau'].includes(e.key_evento)
+        ['Tete', 'Fórmula', 'Mingau', 'Frutas'].includes(e.key_evento)
       );
       setFeedings(alimentacoes);
     } catch (e) {
