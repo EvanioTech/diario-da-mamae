@@ -69,6 +69,7 @@ const SignIn: React.FC = () => {
                 secureTextEntry
                 value={password}
                 onChangeText={setPassword}
+                
             />
             <TouchableOpacity
                 style={{
@@ -119,6 +120,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         paddingHorizontal: 12,
         fontSize: 16,
+        color: 'pink',
     },
 });
 

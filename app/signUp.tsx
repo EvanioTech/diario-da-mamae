@@ -33,6 +33,18 @@ const SignUp = () => {
     return;
   }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/; 
+
+if (!emailRegex.test(email)) {
+  Alert.alert('Erro', 'Por favor, insira um e-mail válido.');
+  return;
+}
+
+  if (password.length < 4) {
+    Alert.alert('Erro', 'A senha deve ter pelo menos 4 caracteres.');
+    return;
+  }
+
   if (password !== confirmPassword) {
     Alert.alert('Erro', 'As senhas não coincidem.');
     return;
@@ -91,7 +103,7 @@ const SignUp = () => {
                 placeholderTextColor={'#999'}
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: 'pink' }]}
                 placeholder="Senha"
                 placeholderTextColor={'#999'}
                 value={password}
@@ -99,7 +111,7 @@ const SignUp = () => {
                 secureTextEntry
             />
             <TextInput
-                style={styles.input}
+                style={[styles.input, { color: 'pink' }]}
                 placeholder="Confirme a Senha"
                 placeholderTextColor={'#999'}
                 value={confirmPassword}
@@ -138,6 +150,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         paddingHorizontal: 12,
         fontSize: 16,
+        color: '#000',
     },
 });
 
