@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React, {useEffect, useRef} from "react";
-import { View, Text, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated } from "react-native";
 
 export default function Splash() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
