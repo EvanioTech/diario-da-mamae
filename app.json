@@ -8,11 +8,7 @@
     "scheme": "diariodamamae",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/images/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#fff"
-    },
+    
     "ios": {
       "supportsTablet": true
     },
