@@ -19,7 +19,7 @@ import {
   getEventosCoco,
   updateEventoCoco,
   deleteEvento
-} from '../../../db/db'; // ajuste o caminho
+} from '../../../db/db'; 
 
 type EventoCoco = {
   id: number;
@@ -29,18 +29,69 @@ type EventoCoco = {
   imagemUri: string | null;
 };
 
+// Novo tipo para os dados agrupados por dia
+type GroupedEventos = {
+  title: string; // Ex: "Sexta-feira, 27 de Setembro"
+  data: EventoCoco[];
+};
+
+
 const CocoPage = () => {
   const [descricao, setDescricao] = useState('');
   const [imagemUri, setImagemUri] = useState<string | null>(null);
-  const [eventos, setEventos] = useState<EventoCoco[]>([]);
+  // Alterado para armazenar os eventos AGRUPADOS
+  const [groupedEventos, setGroupedEventos] = useState<GroupedEventos[]>([]);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editingEvento, setEditingEvento] = useState<EventoCoco | null>(null);
   const [viewImageModalVisible, setViewImageModalVisible] = useState(false);
   const [viewImageUri, setViewImageUri] = useState<string | null>(null);
+  
+  // Novo estado para controlar quais dias estão abertos (expandidos)
+  const [expandedDays, setExpandedDays] = useState<string[]>([]); 
+
+  // Função auxiliar para formatar a data como título de seção
+  const formatDayTitle = (dateString: string) => {
+    const date = new Date(dateString);
+    // Formato: "Dia da semana, XX de Mês"
+    return date.toLocaleDateString('pt-BR', { 
+        weekday: 'long', 
+        day: '2-digit', 
+        month: 'long' 
+    });
+  };
+
+  // Função auxiliar para formatar a hora
+  const formatTime = (isoDate: string) => {
+    const date = new Date(isoDate);
+    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  };
+  
+  // Função que agrupa e formata os dados
+  const groupEventsByDay = (eventos: EventoCoco[]): GroupedEventos[] => {
+    const groups: { [key: string]: EventoCoco[] } = {};
+
+    eventos.forEach(evento => {
+      // Cria uma chave no formato YYYY-MM-DD para agrupar
+      const dateKey = evento.data.substring(0, 10); 
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(evento);
+    });
+
+    // Converte o objeto agrupado em um array formatado
+    return Object.keys(groups)
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // Ordena por data (mais recente primeiro)
+      .map(dateKey => ({
+        title: formatDayTitle(groups[dateKey][0].data),
+        data: groups[dateKey].sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime()), // Ordena os eventos dentro do dia
+      }));
+  };
 
   const carregarEventos = async () => {
-    const ev = await getEventosCoco(); // agora deve trazer Coco, Xixi, Gases e Regurgitou
-    setEventos(ev);
+    const ev = await getEventosCoco(); 
+    // Armazena os dados agrupados
+    setGroupedEventos(groupEventsByDay(ev));
   };
 
   // Atualiza sempre que a tela voltar a ser visível
@@ -49,6 +100,11 @@ const CocoPage = () => {
       carregarEventos();
     }, [])
   );
+  
+  // Efeito para carregar os eventos na montagem inicial
+  useEffect(() => {
+    carregarEventos();
+  }, []);
 
   const escolherImagem = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -125,48 +181,71 @@ const CocoPage = () => {
     setViewImageUri(null);
     setViewImageModalVisible(false);
   };
+  
+  // Função para expandir/recolher o dia
+  const toggleDayExpansion = (dayTitle: string) => {
+    if (expandedDays.includes(dayTitle)) {
+      setExpandedDays(expandedDays.filter(day => day !== dayTitle));
+    } else {
+      setExpandedDays([...expandedDays, dayTitle]);
+    }
+  };
+
+  // Renderiza um único item da FlatList (que é o agrupamento de um dia inteiro)
+  const renderItem = ({ item }: { item: GroupedEventos }) => {
+    const isExpanded = expandedDays.includes(item.title);
+
+    return (
+      <View style={styles.dayContainer}>
+        {/* Título do dia (sempre visível) */}
+        <TouchableOpacity onPress={() => toggleDayExpansion(item.title)} style={styles.dayHeader}>
+          <Text style={styles.dayTitle}>{item.title} ({item.data.length})</Text>
+          <Text style={styles.toggleText}>{isExpanded ? '▲' : '▼'}</Text>
+        </TouchableOpacity>
+
+        {/* Lista de eventos (visível apenas se expandido) */}
+        {isExpanded && item.data.map((evento) => (
+            <View key={evento.id} style={styles.itemContainer}>
+                <View style={{ flex: 1 }}>
+                    <Text style={styles.itemText}>
+                        {formatTime(evento.data)} - {evento.key_evento}
+                    </Text>
+                    <Text style={styles.subText}>
+                        {evento.descricao ?? 'Sem descrição'}
+                    </Text>
+                </View>
+                {evento.imagemUri && (
+                    <TouchableOpacity
+                        onPress={() => evento.imagemUri && abrirModalImagem(evento.imagemUri)}
+                    >
+                        <Image source={{ uri: evento.imagemUri }} style={styles.thumbnail} />
+                    </TouchableOpacity>
+                )}
+                <View style={styles.buttonsRow}>
+                    <TouchableOpacity onPress={() => iniciarEdicao(evento)} style={styles.editBtn}>
+                        <Text style={styles.editText}>Editar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => confirmarExclusao(evento.id)}
+                        style={styles.deleteBtn}
+                    >
+                        <Text style={styles.deleteText}>Excluir</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        ))}
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Cocôs / Xixis / Gases / Regurgitos</Text>
+      <Text style={styles.mainTitle}>Troca de Fraldas</Text>
 
       <FlatList
-        data={eventos}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity style={styles.itemContainer}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.itemText}>
-                {item.key_evento} - {item.descricao ?? 'Sem descrição'}
-              </Text>
-              <Text style={styles.subText}>
-                {new Date(item.data).toLocaleDateString('pt-BR')}{" "}
-                {new Date(item.data).toLocaleTimeString('pt-BR', {
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
-              </Text>
-            </View>
-            {item.imagemUri && (
-              <TouchableOpacity
-                onPress={() => item.imagemUri && abrirModalImagem(item.imagemUri)}
-              >
-                <Image source={{ uri: item.imagemUri }} style={styles.thumbnail} />
-              </TouchableOpacity>
-            )}
-            <View style={styles.buttonsRow}>
-              <TouchableOpacity onPress={() => iniciarEdicao(item)} style={styles.editBtn}>
-                <Text style={styles.editText}>Editar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => confirmarExclusao(item.id)}
-                style={styles.deleteBtn}
-              >
-                <Text style={styles.deleteText}>Excluir</Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        )}
+        data={groupedEventos} // Usando os dados agrupados
+        keyExtractor={(item) => item.title}
+        renderItem={renderItem}
         ListEmptyComponent={
           <Text style={styles.emptyText}>Nenhum registro encontrado.</Text>
         }
@@ -231,16 +310,47 @@ const CocoPage = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff', paddingTop: 50 },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, textAlign: 'center' },
+  container: { flex: 1, padding: 40, backgroundColor: '#fff', paddingTop: 160 },
+  mainTitle: { fontSize: 22, fontWeight: 'bold', marginBottom: 16, textAlign: 'center', color: '#ff69b4' },
+  
+  // NOVOS ESTILOS para o agrupamento
+  dayContainer: {
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#eee',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  dayHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    backgroundColor: '#f9f9f9',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  dayTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  toggleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#0077cc',
+  },
+  // FIM NOVOS ESTILOS
+  
   itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee'
+    borderBottomColor: '#f5f5f5', // Mais claro para os itens internos
+    backgroundColor: '#fff',
   },
-  itemText: { fontSize: 16, fontWeight: '500', flex: 1 },
+  itemText: { fontSize: 16, fontWeight: '500' },
   subText: { fontSize: 12, color: '#666' },
   thumbnail: { width: 50, height: 50, marginHorizontal: 8, borderRadius: 4 },
   buttonsRow: { flexDirection: 'row' },

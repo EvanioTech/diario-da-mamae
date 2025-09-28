@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import {
   View,
@@ -18,11 +18,21 @@ type Evento = {
   data: string;
 };
 
+// Novo tipo para os dados agrupados por dia
+type GroupedEventos = {
+  title: string; // Ex: "Sexta-feira, 27 de Setembro"
+  data: Evento[];
+};
+
 export default function TetePage() {
-  const [feedings, setFeedings] = useState<Evento[]>([]);
+  // Alterado para armazenar os eventos AGRUPADOS
+  const [groupedFeedings, setGroupedFeedings] = useState<GroupedEventos[]>([]);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editedValue, setEditedValue] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
+  
+  // Novo estado para controlar quais dias estão abertos (expandidos)
+  const [expandedDays, setExpandedDays] = useState<string[]>([]); 
 
   useFocusEffect(
     useCallback(() => {
@@ -31,16 +41,59 @@ export default function TetePage() {
   );
 
   // Carrega do banco ao abrir a tela
-    useEffect(() => {
+  useEffect(() => {
     initDB();
   }, []);
+
+  // Função auxiliar para formatar a data como título de seção
+  const formatDayTitle = (dateString: string) => {
+    const date = new Date(dateString);
+    // Formato: "Dia da semana, XX de Mês"
+    return date.toLocaleDateString('pt-BR', { 
+        weekday: 'long', 
+        day: '2-digit', 
+        month: 'long' 
+    });
+  };
+
+  // Função auxiliar para formatar a hora
+  const formatTime = (isoDate: string) => {
+    const date = new Date(isoDate);
+    return date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  };
+  
+  // Função que agrupa e formata os dados
+  const groupEventsByDay = (eventos: Evento[]): GroupedEventos[] => {
+    const groups: { [key: string]: Evento[] } = {};
+
+    eventos.forEach(evento => {
+      // Cria uma chave no formato YYYY-MM-DD para agrupar
+      const dateKey = evento.data.substring(0, 10); 
+      if (!groups[dateKey]) {
+        groups[dateKey] = [];
+      }
+      groups[dateKey].push(evento);
+    });
+
+    // Converte o objeto agrupado em um array formatado
+    return Object.keys(groups)
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // Ordena por data (mais recente primeiro)
+      .map(dateKey => ({
+        title: formatDayTitle(groups[dateKey][0].data),
+        data: groups[dateKey],
+      }));
+  };
+
   const fetchFeedings = async () => {
     try {
       const eventos = await getAllEventos();
       const alimentacoes = eventos.filter((e: Evento) =>
         ['Tete', 'Fórmula', 'Mingau', 'Frutas'].includes(e.key_evento)
       );
-      setFeedings(alimentacoes);
+      
+      // Armazena os dados agrupados
+      setGroupedFeedings(groupEventsByDay(alimentacoes));
+      
     } catch (e) {
       console.error('Erro ao buscar alimentações:', e);
     }
@@ -50,12 +103,6 @@ export default function TetePage() {
     fetchFeedings();
   }, []);
 
-  const formatDateTime = (isoDate: string) => {
-    const date = new Date(isoDate);
-    const data = date.toLocaleDateString('pt-BR');
-    const hora = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    return `${data} ${hora}`;
-  };
 
   const handleDelete = (id: number) => {
     Alert.alert('Excluir evento', 'Tem certeza que deseja excluir este registro?', [
@@ -86,29 +133,56 @@ export default function TetePage() {
       await fetchFeedings();
     }
   };
+  
+  // Função para expandir/recolher o dia
+  const toggleDayExpansion = (dayTitle: string) => {
+    if (expandedDays.includes(dayTitle)) {
+      setExpandedDays(expandedDays.filter(day => day !== dayTitle));
+    } else {
+      setExpandedDays([...expandedDays, dayTitle]);
+    }
+  };
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Alimentações Registradas</Text>
+  // Renderiza um único item da FlatList (que será um dia inteiro)
+  const renderItem = ({ item }: { item: GroupedEventos }) => {
+    const isExpanded = expandedDays.includes(item.title);
 
-      <FlatList
-        data={feedings}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.feedingItem}>
+    return (
+      <View style={styles.dayContainer}>
+        {/* Título do dia (sempre visível) */}
+        <TouchableOpacity onPress={() => toggleDayExpansion(item.title)} style={styles.dayHeader}>
+          <Text style={styles.dayTitle}>{item.title} ({item.data.length})</Text>
+          <Text style={styles.toggleText}>{isExpanded ? '▲' : '▼'}</Text>
+        </TouchableOpacity>
+
+        {/* Lista de eventos (visível apenas se expandido) */}
+        {isExpanded && item.data.map((evento) => (
+          <View key={evento.id} style={styles.feedingItem}>
             <View style={{ flex: 1 }}>
               <Text>
-                {formatDateTime(item.data)} - {item.key_evento}
+                {formatTime(evento.data)} - {evento.key_evento}
               </Text>
             </View>
-            <TouchableOpacity onPress={() => handleEdit(item)} style={styles.actionButton}>
+            <TouchableOpacity onPress={() => handleEdit(evento)} style={styles.actionButton}>
               <Text style={{ color: '#0077cc' }}>Editar</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleDelete(item.id)} style={styles.actionButton}>
+            <TouchableOpacity onPress={() => handleDelete(evento.id)} style={styles.actionButton}>
               <Text style={{ color: '#cc0000' }}>Excluir</Text>
             </TouchableOpacity>
           </View>
-        )}
+        ))}
+      </View>
+    );
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.mainTitle}>Alimentações Registradas</Text>
+
+      <FlatList
+        data={groupedFeedings}
+        keyExtractor={(item) => item.title}
+        renderItem={renderItem}
         ListEmptyComponent={
           <Text style={styles.emptyText}>Nenhuma Alimentação registrada ainda.</Text>
         }
@@ -147,18 +221,47 @@ export default function TetePage() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 40, backgroundColor: '#fff', paddingTop: 160 },
-  title: {
+  mainTitle: { // Alterado de 'title' para 'mainTitle' para diferenciar dos títulos de dia
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: '#ff69b4',
   },
-  feedingItem: {
-    padding: 12,
+  dayContainer: {
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#eee',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  dayHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 15,
+    backgroundColor: '#f9f9f9', // Fundo leve para o cabeçalho
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+  },
+  dayTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  toggleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#0077cc',
+  },
+  feedingItem: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f5f5f5',
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#fff',
   },
   actionButton: {
     marginLeft: 10,

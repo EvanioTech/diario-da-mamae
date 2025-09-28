@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    color: '#ff69b4',
   },
   feedingItem: {
     padding: 12,

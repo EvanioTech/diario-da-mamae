@@ -8,16 +8,30 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
-import { addEvento } from '../../db/db'; 
+import { addEvento } from '../../db/db';
 import { styles } from '../../helpers/home.tab.styles';
+
+// Objeto para mapear a opção selecionada ao subtítulo desejado
+const subtitleMap: { [key: string]: string } = {
+  Tete: 'Escolha o tipo de alimentação',
+  Coco: 'Escolha um evento de troca de fralda', // Subtítulo personalizado
+  Banho: 'Escolha um evento de higiene',
+  Remédio: 'Escolha o tipo de suplemento/remédio',
+};
 
 const Home = () => {
   const [selectedOption, setSelectedOption] = useState('');
   const [ismodalVisible, setIsModalVisible] = useState(false);
   const [modalOptions, setModalOptions] = useState<{ key: string }[]>([]);
+  // Novo estado para o subtítulo dinâmico
+  const [modalSubtitle, setModalSubtitle] = useState('Escolha uma opção');
 
   const handleOptionSelect = (option: string) => {
     setSelectedOption(option);
+    
+    // Define o subtítulo baseado na opção, usando o objeto
+    setModalSubtitle(subtitleMap[option] || 'Escolha uma opção'); 
+    
     setIsModalVisible(true);
 
     if (option === 'Tete') {
@@ -119,7 +133,8 @@ const Home = () => {
       >
         <View style={styles.containerModal}>
           <Text style={styles.title}>Você selecionou: {selectedOption}</Text>
-          <Text style={styles.subtitle}>Escolha uma opção</Text>
+          {/* Subtítulo dinâmico */}
+          <Text style={styles.subtitle}>{modalSubtitle}</Text>
 
           <FlatList
             showsVerticalScrollIndicator={false}
