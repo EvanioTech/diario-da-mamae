@@ -24,7 +24,7 @@ export default function Splash() {
   return (
     <View style={styles.container}>
       <Animated.Image
-        source={require("../assets/images/splash.png")}
+        source={require("../assets/images/splashScreen.png")}
         style={[styles.logo, { opacity: fadeAnim }]}
       />
     </View>
