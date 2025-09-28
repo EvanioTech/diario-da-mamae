@@ -11,7 +11,9 @@ export const initDB = async () => {
       name TEXT NOT NULL,
       email TEXT NOT NULL UNIQUE,
       senha TEXT NOT NULL,
-      babyName TEXT NOT NULL
+      babyName TEXT NOT NULL,
+      bio TEXT,       
+      photoUri TEXT   
     );
 
     CREATE TABLE IF NOT EXISTS evento (
@@ -23,11 +25,16 @@ export const initDB = async () => {
     );
   `);
 
-  // Se tabela já existia sem as colunas, tente adicioná-las — evita que quebre pra quem já tem app
-  // Da pra checar colunas ou simplesmente tentar ADD COLUMN com try/catch
+  // Tenta adicionar colunas em 'evento' (retrocompatibilidade)
   await db.execAsync(`ALTER TABLE evento ADD COLUMN descricao TEXT;`)
     .catch((e) => { /* silenciar se já existir */ });
   await db.execAsync(`ALTER TABLE evento ADD COLUMN imagemUri TEXT;`)
+    .catch((e) => { /* silenciar se já existir */ });
+
+  // Tenta adicionar colunas em 'users' (retrocompatibilidade)
+  await db.execAsync(`ALTER TABLE users ADD COLUMN bio TEXT;`)
+    .catch((e) => { /* silenciar se já existir */ });
+  await db.execAsync(`ALTER TABLE users ADD COLUMN photoUri TEXT;`)
     .catch((e) => { /* silenciar se já existir */ });
 };
 
@@ -79,7 +86,6 @@ export const addEventoCoco = async (
     throw error;
   }
 };
-
 
 
 // pegar todos eventos
@@ -147,7 +153,26 @@ export const updateEvento = async (id: number, newKeyEvento: string) => {
     throw error;
   }
 };
+
+// FUNÇÃO: ATUALIZA O PERFIL DO USUÁRIO
+export const updateUserProfile = async (
+  id: number,
+  newName: string,
+  newEmail: string,
+  newBio: string | null = null,
+  newPhotoUri: string | null = null
+) => {
+  try {
+    await db.runAsync(
+      `UPDATE users SET name = ?, email = ?, bio = ?, photoUri = ? WHERE id = ?;`,
+      [newName, newEmail, newBio, newPhotoUri, id]
+    );
+  } catch (error) {
+    console.error("Erro ao atualizar perfil do usuário:", error);
+    throw error;
+  }
+};
+
 function getDBConnection() {
   throw new Error("Function not implemented.");
 }
-
