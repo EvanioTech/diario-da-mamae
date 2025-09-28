@@ -26,6 +26,7 @@ const ReportBugScreen = () => {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                placeholderTextColor={'#999'}
             />
             <TextInput
                 style={[styles.input, styles.textArea]}
@@ -34,6 +35,7 @@ const ReportBugScreen = () => {
                 onChangeText={setDescription}
                 multiline
                 numberOfLines={5}
+                placeholderTextColor={'#999'}
             />
             <TouchableOpacity onPress={handleSubmit} style={styles.button}>
                 <Text style={{ color: '#ff69b4', fontWeight: 'bold', fontSize: 20 }}>Enviar</Text>
