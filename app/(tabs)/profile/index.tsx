@@ -1,37 +1,59 @@
-import { View, Text, Button, TouchableOpacity } from "react-native";
+import { View, Text, Button, TouchableOpacity, Image, Alert , StyleSheet} from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import AntDesign from '@expo/vector-icons/AntDesign';
-import {db, initDB,getFirstAsync, runAsync} from '../../../db/db';
+// Ajustado o caminho de importação do db
+import {db, initDB,getFirstAsync, runAsync, updateUserProfile} from '../../../db/db';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
+import * as ImagePicker from 'expo-image-picker';
 
+// A type User deve espelhar as colunas do seu DB, incluindo 'bio' e 'photoUri'
 type User = {
   id: number;
   name: string;
   email: string;
   senha: string;
   babyName: string;
+  bio: string | null;       
+  photoUri: string | null;  
 };
 
 export default function Profile() {
 const [user, setUser] = useState<User | null>(null);
+const [photoUri, setPhotoUri] = useState<string | null>(null);
 
 
   const fetchData = async () => {
     try {
       await initDB();
-      const name = await AsyncStorage.getItem("usuarioLogado");
-      if (!name) return;
+      
+      // Armazenamento incorreto: A chave "usuarioLogado" guarda o EMAIL (vindo do edit.tsx/login)
+      const emailLogadoPelaChaveErrada = await AsyncStorage.getItem("usuarioLogado");
+      // Armazenamento correto: A chave "emailUsuarioLogado" também guarda o EMAIL
+      const emailOficial = await AsyncStorage.getItem("emailUsuarioLogado");
+      
+      // Usaremos o emailOficial para buscar, garantindo que o usuário está logado
+      const finalEmail = emailOficial || emailLogadoPelaChaveErrada; 
+      
+      if (!finalEmail) { 
+        // O warning aqui só deveria aparecer se realmente não houvesse login
+        console.warn("Usuário não logado no AsyncStorage. Redirecionando ou exibindo tela de login.");
+        return;
+      }
 
-      const email = await AsyncStorage.getItem("emailUsuarioLogado");
-      if (!email) return;
 
+      // FIX: Consulta simplificada usando apenas o email, já que ele é UNIQUE e é o que temos.
       const usuario = await getFirstAsync<User>(
-        "SELECT * FROM users WHERE name = ? AND email = ?",
-        [name, email]
+        "SELECT * FROM users WHERE email = ?",
+        [finalEmail]
       );
+      
       if (usuario) {
         setUser(usuario);
+        // Define o estado photoUri com o valor do banco de dados
+        setPhotoUri(usuario.photoUri ?? null); 
+      } else {
+         console.warn("Usuário logado no AsyncStorage mas não encontrado no DB. Necessário relogar.");
       }
     } catch (error) {
       console.error("Erro ao buscar usuário:", error);
@@ -44,15 +66,33 @@ const [user, setUser] = useState<User | null>(null);
     }, [])
   );
 
+
+  
+  
+    
+
   const handleLogout = async () => {
     await AsyncStorage.removeItem("usuarioLogado");
+    await AsyncStorage.removeItem("emailUsuarioLogado");
     router.replace("/signIn");
   };
 
   
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center",  }}>
-      <Text style={{ fontSize: 24, fontWeight: "bold", color: "#fa0fb3ff" }}>Meu Perfil</Text>
+      <Text style={{ fontSize: 24, fontWeight: "bold", color: "#fa0fb3ff", marginBottom: 20 }}>Meu Perfil</Text>
+
+
+      
+              {/* O estado photoUri agora carrega o valor do banco de dados */}
+              {photoUri ? (
+                <Image source={{ uri: photoUri }} style={styles.profilePhoto} />
+              ) : (
+                <View style={styles.profilePhotoPlaceholder}>
+                  <AntDesign name="user" size={49} color="#fff" />
+                </View>
+              )}
+            
       <TouchableOpacity 
       style={
                   {width:"95%",
@@ -65,7 +105,7 @@ const [user, setUser] = useState<User | null>(null);
                       alignItems:'center',
                       padding:10,
                       marginBottom:20,
-                      marginTop:70,
+                      marginTop:50,
                       
                       flexDirection:'row',
                       }}
@@ -84,7 +124,7 @@ const [user, setUser] = useState<User | null>(null);
                       alignItems:'center',
                       padding:10,
                       marginBottom:20,
-                      marginTop:20,
+                      marginTop:5,
                       
                       flexDirection:'row',
                       }} onPress={() => router.push("/profile/report")}>
@@ -113,3 +153,21 @@ const [user, setUser] = useState<User | null>(null);
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  profilePhoto: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#ccc',
+  },
+  profilePhotoPlaceholder: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#fa0fb3ff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

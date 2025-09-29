@@ -11,6 +11,14 @@ import {
 import { addEvento } from '../../db/db';
 import { styles } from '../../helpers/home.tab.styles';
 
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  bio?: string;
+  photoUri?: string; 
+};
+
 // Objeto para mapear a opção selecionada ao subtítulo desejado
 const subtitleMap: { [key: string]: string } = {
   Tete: 'Escolha o tipo de alimentação',
